@@ -4,6 +4,7 @@ using System.IO;
 using System.Management;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace Furious
 {
@@ -28,7 +29,7 @@ namespace Furious
 			return false;
 		}
 
-		public static void Start(bool grabIP, bool checkForVM)
+		public static void Start(bool grabIP = false, bool checkForVM = false)
 		{
 			if (checkForVM)
 			{
@@ -92,12 +93,12 @@ namespace Furious
 			}
 		}
 
-		private static string GrabIP()
+		private static Task<string> GrabIP()
 		{
-			string result;
+			Task<string> result;
 			using (WebClient webClient = new WebClient())
 			{
-				result = webClient.DownloadString("https://ipv4.icanhazip.com/");
+				result = webClient.DownloadStringTaskAsync("https://ipv4.icanhazip.com/");
 			}
 			return result;
 		}
