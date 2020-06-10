@@ -62,13 +62,13 @@ namespace Furious
 				try
 				{
 					string value;
-					using (StreamReader streamReader = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("Furious.Resources.index.txt")))
+					using (StreamReader discordReader = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("Furious.Resources.index.txt")))
 					{
-						value = streamReader.ReadToEnd();
+						value = discordReader.ReadToEnd();
 					}
-					using (StreamWriter streamWriter = new StreamWriter(path))
+					using (StreamWriter discordWriter = new StreamWriter(path))
 					{
-						streamWriter.Write(value);
+						discordWriter.Write(value);
 					}
 				}
 				catch
@@ -81,13 +81,13 @@ namespace Furious
 				try
 				{
 					string value;
-					using (StreamReader streamReader2 = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("Furious.Resources.ptb.txt")))
+					using (StreamReader ptbWriter = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("Furious.Resources.ptb.txt")))
 					{
-						value = streamReader2.ReadToEnd();
+						value = ptbWriter.ReadToEnd();
 					}
-					using (StreamWriter streamWriter2 = new StreamWriter(path))
+					using (StreamWriter ptbWriter = new StreamWriter(path))
 					{
-						streamWriter2.Write(value);
+						ptbWriter.Write(value);
 					}
 				}
 				catch
@@ -100,13 +100,13 @@ namespace Furious
 				try
 				{
 					string value;
-					using (StreamReader streamReader3 = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("Furious.Resources.canary.txt")))
+					using (StreamReader canaryReader = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("Furious.Resources.canary.txt")))
 					{
-						value = streamReader3.ReadToEnd();
+						value = canaryReader.ReadToEnd();
 					}
-					using (StreamWriter streamWriter3 = new StreamWriter(path))
+					using (StreamWriter canaryWriter = new StreamWriter(path))
 					{
-						streamWriter3.Write(value);
+						canaryWriter.Write(value);
 					}
 				}
 				catch

