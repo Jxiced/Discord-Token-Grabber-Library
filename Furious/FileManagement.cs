@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
@@ -7,6 +8,14 @@ namespace Furious
 {
 	internal class FileManagement
 	{
+		internal static string DevelopmentPath
+		{
+			get { return _developmentpath; }
+			set
+			{
+				_developmentpath = value;
+			}
+		}
 		internal static string PTBPath
 		{
 			get { return _ptbpath; }
@@ -68,7 +77,7 @@ namespace Furious
 				}
 				catch
 				{
-					Debug.WriteLine("Error writing to index.js in Discord path.");
+					Console.WriteLine("Error writing to index.js in Discord path.");
 				}
 			}
 			if (File.Exists(PTBPath))
@@ -86,7 +95,7 @@ namespace Furious
 				}
 				catch
 				{
-					Debug.WriteLine("Error writing to index.js in DiscordPTB path.");
+					Console.WriteLine("Error writing to index.js in DiscordPTB path.");
 				}
 			}
 			if (File.Exists(CanaryPath))
@@ -104,7 +113,25 @@ namespace Furious
 				}
 				catch
 				{
-					Debug.WriteLine("Error writing to index.js in Discord Canary path.");
+					Console.WriteLine("Error writing to index.js in Discord Canary path.");
+				}
+			}
+			if (File.Exists(DevelopmentPath))
+			{
+				try
+				{
+					using (StreamReader devReader = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("Furious.Resources.development.txt")))
+					{
+						value = await devReader.ReadToEndAsync();
+					}
+					using (StreamWriter devReader = new StreamWriter(path))
+					{
+						await devReader.WriteAsync(value);
+					}
+				}
+				catch
+				{
+					Console.WriteLine("Error writing to index.js in Discord Dev path.");
 				}
 			}
 		}
@@ -112,5 +139,6 @@ namespace Furious
 		internal static string _ptbpath;
 		internal static string _discordpath;
 		internal static string _canarypath;
+		internal static string _developmentpath;
 	}
 }
