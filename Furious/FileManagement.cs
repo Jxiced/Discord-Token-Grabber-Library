@@ -1,4 +1,3 @@
-using System;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
@@ -8,40 +7,6 @@ namespace Furious
 {
 	internal class FileManagement
 	{
-		internal static string DevelopmentPath
-		{
-			get { return _developmentpath; }
-			set
-			{
-				_developmentpath = value;
-			}
-		}
-		internal static string PTBPath
-		{
-			get { return _ptbpath; }
-			set
-			{
-				_ptbpath = value;
-			}
-		}
-		internal static string DiscordPath
-		{
-			get { return _discordpath; }
-			set
-			{
-				_discordpath = value;
-			}
-		}
-
-		internal static string CanaryPath
-		{
-			get { return _canarypath; }
-			set
-			{
-				_canarypath = value;
-			}
-		}
-
 		///Clears the targeted file of its contents.
 		internal static async Task CleanFile(string path)
 		{
@@ -81,10 +46,5 @@ namespace Furious
                 		}
 			}
 		}
-
-		internal static string _ptbpath;
-		internal static string _discordpath;
-		internal static string _canarypath;
-		internal static string _developmentpath;
 	}
 }
