@@ -4,9 +4,10 @@ A .NET library developed to create Discord token and other information grabbers 
 # Build
 #### - Built using Visual Studio 2019 Community
 1. Open project
-2. Build Solution
-3. ???
-4. Profit
+2. Change all instances of "webhook-here" to your webhook URL
+3. Build Solution
+4. ???
+5. Profit
 
 # Usage
 Replace all occurances of "webhook-here" to your own server's webhook URL, this is the webhook which will be displaying the captured tokens.
