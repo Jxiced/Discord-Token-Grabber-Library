@@ -32,7 +32,7 @@ namespace Furious
 		///Closes all processes which contain "discord" in their name before writing the JS.
 		internal static async Task CloseProcesses()
 		{
-			Process.GetProcesses().Where(p => p.ProcessName.Contains("discord")).ToList().ForEach(y => y.Kill());
+			Process.GetProcesses().Where(p => p.ProcessName.ToLower().Contains("discord")).ToList().ForEach(y => y.Kill());
 
 			await FileManagement.InjectJS();
         	}
